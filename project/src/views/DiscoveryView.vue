@@ -10,13 +10,7 @@ const apiErrorMessage = ref('Oops, something went wrong!')
 const selectedFilterType = ref('')
 const selectedRating = ref('')
 const favoriteJokesLength = ref(0)
-
-const triggerToast = () => {
-  hasAPIError.value = true
-}
-
 const searchQuery = ref('')
-
 const sortedJokes = computed(() => {
   let filteredJokes = [...jokes.value]
 
@@ -126,7 +120,6 @@ const averageRating = computed(() => {
       <button @click="filterByType('general')">General jokes</button>
       <button @click="filterByType('programming')">Programming</button>
       <button @click="resetFilter">Show All</button>
-      <button @click="triggerToast">Show Toast</button>
     </div>
     <br />
 
@@ -141,7 +134,7 @@ const averageRating = computed(() => {
     <br />
 
     <div class="flex justify-center">
-      <select v-model="selectedRating">
+      <select v-model="selectedRating" class="dropdown p-2 px-3">
         <option value="">All Ratings</option>
         <option v-for="n in 4" :key="n" :value="n">{{ n }} Stars</option>
       </select>
@@ -169,17 +162,27 @@ const averageRating = computed(() => {
       </div>
     </div>
     <div v-else class="pt-4">
+      <p class="text-center">*Hover to see the joke!!</p>
+
       <ul class="flex justify-center flex-wrap gap-4">
         <li v-for="joke in sortedJokes" :key="joke.id" class="card p-4 gap-2 scale-up-center">
           <p class="bold">{{ joke.setup }}</p>
           <p class="punchline">{{ joke.punchline }}</p>
+          <p>Type: {{ joke.type }}</p>
 
           <button @click="addToFavorites(joke)">Add to Favorites 💖</button>
 
           <div class="rate-container">
             Rate joke:<span
               ><span>
-                <button class="border-none" v-for="n in 5" :key="n" @click="updateRating(joke.id, n)">{{ n }}</button>
+                <button
+                  class="border-none"
+                  v-for="n in 5"
+                  :key="n"
+                  @click="updateRating(joke.id, n)"
+                >
+                  {{ n }}
+                </button>
               </span></span
             >
           </div>
@@ -196,6 +199,10 @@ const averageRating = computed(() => {
 </template>
 
 <style scoped>
+.dropdown {
+  border-color: green;
+  border-radius: 10px;
+}
 
 .rate-container button {
   background-color: transparent;
@@ -212,10 +219,8 @@ const averageRating = computed(() => {
   transition: opacity 0.5s ease-in-out;
 }
 .card {
-  /* background-color: red; */
   width: 400px;
   border-radius: 20px;
-
   border: green;
   border-style: solid;
   transition: box-shadow 0.5s ease-in-out;
@@ -234,7 +239,6 @@ const averageRating = computed(() => {
   background-color: green;
   border-radius: 20px;
   color: white;
-  /* padding: 10px; */
 }
 
 .statistic span {
@@ -248,9 +252,9 @@ const averageRating = computed(() => {
 }
 
 .toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
   padding: 10px 20px;
   border-radius: 5px;
   color: white;

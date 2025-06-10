@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@vue/runtime-core": "^3.5.16",
+    "@vue/runtime-dom": "^3.5.16"
+  }
+}

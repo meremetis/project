@@ -1,0 +1,24 @@
+@tailwind utilities;
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  color: rgb(230, 227, 227) !important;
+}
+
+
+button {
+  border-color: green;
+  border-radius: 20px;
+  padding: 10px;
+  color: green;
+  background-color: transparent;
+}
+
+button:hover {
+  color: white;
+  background-color: green;
+}

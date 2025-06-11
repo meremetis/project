@@ -19,11 +19,13 @@ const populateJokes = () => {
 </script>
 
 <template>
-  <ul>
-    <li v-for="joke in favoriteJokes" :key="joke.id">
-      {{ joke.id }} - {{ joke.type }}
+  <p class="text-center info">*Hover to see the joke!!</p>
+  <ul class="flex justify-center flex-wrap gap-4">
+    <li v-for="joke in favoriteJokes" :key="joke.id" class="card p-4 gap-2 flex-col justify-between scale-up-center">
+      <p class="bold">{{ joke.setup }}</p>
+      <p class="punchline">{{ joke.punchline }}</p>
 
-      <button @click="removeFromFavorites(joke.id)">Remove from favorite</button>
+      <button class="remove-from-favorite" @click="removeFromFavorites(joke.id)">Remove from favorite ❌</button>
 
       <span>
         Rating:
@@ -31,14 +33,15 @@ const populateJokes = () => {
       </span>
     </li>
   </ul>
+
 </template>
 
 <style>
-/* @media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-} */
+.info {
+  color: white;
+}
+
+.remove-from-favorite{
+  color: black;
+}
 </style>

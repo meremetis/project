@@ -64,6 +64,10 @@ onMounted(() => {
     })
 })
 
+const hasJokes = () => {
+  return jokes.value.length > 0
+}
+
 // Function to filter jokes by type
 const filterByType = (type) => {
   selectedFilterType.value = type
@@ -140,7 +144,7 @@ const averageRating = computed(() => {
       </select>
     </div>
 
-    <div class="absolute statistic p-3">
+    <div class="absolute statistic p-3 scale-up-center">
       <h3>Collection Statistics</h3>
       <p>
         Total Jokes Saved: <span>{{ totalJokesSaved }}</span>
@@ -154,91 +158,110 @@ const averageRating = computed(() => {
       <div class="toast warning">{{ apiErrorMessage }} <button @click="hideToast()">X</button></div>
     </div>
 
-    <div v-if="isLoading">
-      <div class="flex justify-center">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
+    <div>
+      <div v-if="isLoading">
+        <div class="flex justify-center mt-3">
+          <!-- <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div> -->
+          <span class="loader"></span>
         </div>
       </div>
-    </div>
-    <div v-else class="pt-4">
-      <p class="text-center">*Hover to see the joke!!</p>
+      <div v-if="!isLoading" class="pt-4">
+        <p v-if="!hasAPIError && hasJokes()" class="text-center info">*Hover to see the joke!!</p>
+        <ul class="flex justify-center flex-wrap gap-4">
+          <li
+            v-for="joke in sortedJokes"
+            :key="joke.id"
+            class="card p-4 gap-2 flex-col justify-between scale-up-center"
+          >
+            <p class="bold">{{ joke.setup }}</p>
+            <p class="punchline">{{ joke.punchline }}</p>
+            <p>Type: {{ joke.type }}</p>
 
-      <ul class="flex justify-center flex-wrap gap-4">
-        <li v-for="joke in sortedJokes" :key="joke.id" class="card p-4 gap-2 scale-up-center">
-          <p class="bold">{{ joke.setup }}</p>
-          <p class="punchline">{{ joke.punchline }}</p>
-          <p>Type: {{ joke.type }}</p>
+            <button class="add-favorites" @click="addToFavorites(joke)">Add to Favorites 💖</button>
 
-          <button @click="addToFavorites(joke)">Add to Favorites 💖</button>
+            <div class="rate-container">
+              Rate joke:<span
+                ><span>
+                  <button
+                    class="border-none"
+                    v-for="n in 5"
+                    :key="n"
+                    @click="updateRating(joke.id, n)"
+                  >
+                    {{ n }}
+                  </button>
+                </span></span
+              >
+            </div>
 
-          <div class="rate-container">
-            Rate joke:<span
-              ><span>
-                <button
-                  class="border-none"
-                  v-for="n in 5"
-                  :key="n"
-                  @click="updateRating(joke.id, n)"
-                >
-                  {{ n }}
-                </button>
-              </span></span
-            >
-          </div>
-
-          <!-- Display stars based on rating -->
-          <span>
-            Rating:
-            <span v-for="n in joke.rating" :key="n">⭐</span>
-          </span>
-        </li>
-      </ul>
+            <!-- Display stars based on rating -->
+            <span>
+              Rating:
+              <span v-for="n in joke.rating" :key="n">⭐</span>
+            </span>
+          </li>
+        </ul>
+      </div>
     </div>
   </main>
 </template>
 
 <style scoped>
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+main {
+  min-height: 100vh;
+}
+
+.info {
+  color: white;
+}
+
+.add-favorites {
+  color: black;
+}
+
 .dropdown {
-  border-color: green;
+  border-color: rgba(242, 200, 201, 255);
   border-radius: 10px;
 }
 
 .rate-container button {
   background-color: transparent;
-  color: green;
+  color: black;
 }
 
 .rate-container button:hover {
   background-color: transparent;
-  color: black;
-}
-
-.punchline {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
-.card {
-  width: 400px;
-  border-radius: 20px;
-  border: green;
-  border-style: solid;
-  transition: box-shadow 0.5s ease-in-out;
-}
-
-.card:hover {
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-.card:hover .punchline {
-  opacity: 1;
+  color: rgba(242, 200, 201, 255);
 }
 
 .statistic {
   right: 0;
   top: 0;
-  background-color: green;
+  background-color: rgba(242, 200, 201, 255);
   border-radius: 20px;
-  color: white;
+  color: black;
 }
 
 .statistic span {
@@ -249,6 +272,7 @@ const averageRating = computed(() => {
 .search-input {
   min-width: 300px;
   border-radius: 10px;
+  border-color: rgba(242, 200, 201, 255) !important;
 }
 
 .toast {
@@ -276,43 +300,5 @@ const averageRating = computed(() => {
   font-size: 18px;
   cursor: pointer;
   margin-left: 10px;
-}
-
-.scale-up-center {
-  -webkit-animation: scale-up-center 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-  animation: scale-up-center 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-}
-
-/* ----------------------------------------------
- * Generated by Animista on 2025-6-10 21:18:15
- * Licensed under FreeBSD License.
- * See http://animista.net/license for more info. 
- * w: http://animista.net, t: @cssanimista
- * ---------------------------------------------- */
-
-/**
- * ----------------------------------------
- * animation scale-up-center
- * ----------------------------------------
- */
-@-webkit-keyframes scale-up-center {
-  0% {
-    -webkit-transform: scale(0.5);
-    transform: scale(0.5);
-  }
-  100% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-}
-@keyframes scale-up-center {
-  0% {
-    -webkit-transform: scale(0.5);
-    transform: scale(0.5);
-  }
-  100% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
 }
 </style>

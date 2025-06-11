@@ -1,40 +1,24 @@
 <template>
   <header class="py-4 px-5">
-      <nav class="flex gap-5 justify-center">
-        <RouterLink to="/" class="link !font-bold">Discovery</RouterLink>
-        <RouterLink to="/favorite" class="link !font-bold">Favorite</RouterLink>
-      </nav>
-
-
-       <div class="p-4 bg-blue-500 text-white">
-    Hello, Tailwind in Vue!
-  </div>
+    <nav class="flex gap-5 justify-center">
+      <RouterLink to="/" class="!text-white !font-bold">Discovery</RouterLink>
+      <RouterLink to="/favorite" class="!text-white !font-bold">Favorite</RouterLink>
+    </nav>
   </header>
 
-  <div class="p-4 menu">
+  <div class="p-4 main">
     <RouterView />
-
   </div>
 </template>
 
 <style scoped>
-
   header {
-    /* background-color: green; */
-
-  background-image: url("./assets/images/blackground.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-
- 
+    background-image: url('./assets/images/blackground.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 
-  .link {
-    color: white;
-    font-weight: bold;
+  .main {
+    background-color: #383644;
   }
-
-  .menu {
-  background-color: #383644;
-}
 </style>

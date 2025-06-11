@@ -2,6 +2,9 @@
 import { ref, onMounted, computed } from 'vue'
 import apiService from '../core/services/api.service'
 import jokesService from '../core/services/jokes.service'
+import Loader from './../components/loader.vue'
+import Toast from './../components/Toast.vue'
+import JokeCard from './../components/JokeCard.vue'
 
 const jokes = ref([])
 const isLoading = ref(false)
@@ -77,10 +80,6 @@ const resetFilter = () => {
   selectedFilterType.value = ''
 }
 
-const hideToast = () => {
-  hasAPIError.value = false
-}
-
 const addToFavorites = (joke: any) => {
   jokesService.addFavorite(joke)
   console.log('favorites', jokesService.getFavoriteJokes())
@@ -117,7 +116,7 @@ const averageRating = computed(() => {
 </script>
 
 <template>
-  <main class="relative">
+  <main class="relative min-h-screen">
     <div class="flex gap-2 justify-center">
       <button @click="sortByRating">Sort by Rating</button>
       <button @click="sortAlphabetically">Sort Alphabetically</button>
@@ -130,7 +129,7 @@ const averageRating = computed(() => {
     <div class="flex justify-center">
       <!-- search -->
       <input
-        class="search-input px-3 py-2"
+        class="text-white min-w-[300px] rounded-[10px] border border-[#F2C8C9] px-3 py-2"
         v-model="searchQuery"
         placeholder="Search jokes..."
       /><br />
@@ -138,167 +137,51 @@ const averageRating = computed(() => {
     <br />
 
     <div class="flex justify-center">
-      <select v-model="selectedRating" class="dropdown p-2 px-3">
+      <select
+        v-model="selectedRating"
+        class="border-[#F2C8C9] border-solid rounded-[10px] text-[#F2C8C9] p-2 px-3"
+      >
         <option value="">All Ratings</option>
-        <option v-for="n in 4" :key="n" :value="n">{{ n }} Stars</option>
+        <option v-for="n in 4" :key="n" :value="n" class="bg-white !text-black">
+          {{ n }} Stars
+        </option>
       </select>
     </div>
 
-    <div class="absolute statistic p-3 scale-up-center">
-      <h3>Collection Statistics</h3>
+    <div class="absolute right-0 top-0 bg-[#F2C8C9] rounded-[20px] text-black p-4 scale-up-center">
+      <h3 class="font-bold">Collection Statistics</h3>
       <p>
-        Total Jokes Saved: <span>{{ totalJokesSaved }}</span>
+        Total Jokes Saved: <span class="text-[20px] font-bold">{{ totalJokesSaved }}</span>
       </p>
       <p>
-        Average Rating: <span>{{ averageRating }}</span>
+        Average Rating: <span class="text-[20px] font-bold">{{ averageRating }}</span>
       </p>
     </div>
 
     <div v-if="hasAPIError">
-      <div class="toast warning">{{ apiErrorMessage }} <button @click="hideToast()">X</button></div>
+      <Toast class="absolute top-5 left-5" :message="apiErrorMessage" />
     </div>
 
     <div>
       <div v-if="isLoading">
         <div class="flex justify-center mt-3">
-          <!-- <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div> -->
-          <span class="loader"></span>
+          <Loader />
         </div>
       </div>
       <div v-if="!isLoading" class="pt-4">
-        <p v-if="!hasAPIError && hasJokes()" class="text-center info">*Hover to see the joke!!</p>
+        <p v-if="!hasAPIError && hasJokes()" class="text-center text-white info mb-3">
+          *Hover to see the punchline!!
+        </p>
         <ul class="flex justify-center flex-wrap gap-4">
-          <li
+          <JokeCard
             v-for="joke in sortedJokes"
             :key="joke.id"
-            class="card p-4 gap-2 flex-col justify-between scale-up-center"
-          >
-            <p class="bold">{{ joke.setup }}</p>
-            <p class="punchline">{{ joke.punchline }}</p>
-            <p>Type: {{ joke.type }}</p>
-
-            <button class="add-favorites" @click="addToFavorites(joke)">Add to Favorites 💖</button>
-
-            <div class="rate-container">
-              Rate joke:<span
-                ><span>
-                  <button
-                    class="border-none"
-                    v-for="n in 5"
-                    :key="n"
-                    @click="updateRating(joke.id, n)"
-                  >
-                    {{ n }}
-                  </button>
-                </span></span
-              >
-            </div>
-
-            <!-- Display stars based on rating -->
-            <span>
-              Rating:
-              <span v-for="n in joke.rating" :key="n">⭐</span>
-            </span>
-          </li>
+            :joke="joke"
+            @addToFavorites="addToFavorites"
+            @updateRating="updateRating"
+          />
         </ul>
       </div>
     </div>
   </main>
 </template>
-
-<style scoped>
-.loader {
-  width: 48px;
-  height: 48px;
-  border: 5px solid #fff;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-}
-
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-main {
-  min-height: 100vh;
-}
-
-.info {
-  color: white;
-}
-
-.add-favorites {
-  color: black;
-}
-
-.dropdown {
-  border-color: rgba(242, 200, 201, 255);
-  border-radius: 10px;
-}
-
-.rate-container button {
-  background-color: transparent;
-  color: black;
-}
-
-.rate-container button:hover {
-  background-color: transparent;
-  color: rgba(242, 200, 201, 255);
-}
-
-.statistic {
-  right: 0;
-  top: 0;
-  background-color: rgba(242, 200, 201, 255);
-  border-radius: 20px;
-  color: black;
-}
-
-.statistic span {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.search-input {
-  min-width: 300px;
-  border-radius: 10px;
-  border-color: rgba(242, 200, 201, 255) !important;
-}
-
-.toast {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  color: white;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-width: 200px;
-}
-
-.toast.warning {
-  background-color: #ffc107;
-}
-
-.toast button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  margin-left: 10px;
-}
-</style>

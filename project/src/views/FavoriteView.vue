@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import jokesService from './../core/services/jokes.service'
+import JokeCard from './../components/JokeCard.vue'
 
 const favoriteJokes = ref<any>([])
 
@@ -19,29 +20,14 @@ const populateJokes = () => {
 </script>
 
 <template>
-  <p class="text-center info">*Hover to see the joke!!</p>
+  <p class="text-center text-white mb-3">*Hover to see the punchline!!</p>
   <ul class="flex justify-center flex-wrap gap-4">
-    <li v-for="joke in favoriteJokes" :key="joke.id" class="card p-4 gap-2 flex-col justify-between scale-up-center">
-      <p class="bold">{{ joke.setup }}</p>
-      <p class="punchline">{{ joke.punchline }}</p>
-
-      <button class="remove-from-favorite" @click="removeFromFavorites(joke.id)">Remove from favorite ❌</button>
-
-      <span>
-        Rating:
-        <span v-for="n in joke.rating" :key="n">⭐</span>
-      </span>
-    </li>
+    <JokeCard
+      v-for="joke in favoriteJokes"
+      :key="joke.id"
+      :joke="joke"
+      :isFavorite="true"
+      @removeFromFavorites="removeFromFavorites"
+    />
   </ul>
-
 </template>
-
-<style>
-.info {
-  color: white;
-}
-
-.remove-from-favorite{
-  color: black;
-}
-</style>

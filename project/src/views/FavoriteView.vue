@@ -5,7 +5,7 @@ import JokeCard from './../components/JokeCard.vue'
 
 const favoriteJokes = ref<any>([])
 
-onMounted(async () => {
+onMounted(() => {
   populateJokes()
 })
 

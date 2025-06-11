@@ -62,26 +62,3 @@ button:hover {
     transform: scale(1);
   }
 }
-
-
-/* card */
-.punchline {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
-.card {
-  width: 400px;
-  border-radius: 20px;
-  border: rgba(242,200,201,255);
-  border-style: solid;
-  transition: box-shadow 0.5s ease-in-out;
-  color: black;
-  background-color: white;
-}
-
-.card:hover {
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-.card:hover .punchline {
-  opacity: 1;
-}

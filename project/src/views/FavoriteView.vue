@@ -20,7 +20,7 @@ const populateJokes = () => {
 </script>
 
 <template>
-  <p class="text-center text-white mb-3">*Hover to see the punchline!!</p>
+  <p class="text-center text-white mb-3">*Hover over the card to reveal the punchline!</p>
   <ul class="flex justify-center flex-wrap gap-4">
     <JokeCard
       v-for="joke in favoriteJokes"

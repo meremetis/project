@@ -2,11 +2,11 @@
 import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
-  joke: Object, // Accepts a joke object
-  isFavorite: Boolean, // Determines if the joke is in favorites
+  joke: Object,
+  isFavorite: Boolean,
 })
 
-const emit = defineEmits(['addToFavorites', 'removeFromFavorites', 'updateRating']) // Defines events for actions
+const emit = defineEmits(['addToFavorites', 'removeFromFavorites', 'updateRating'])
 
 const addToFavorites = () => {
   emit('addToFavorites', props.joke)
@@ -22,7 +22,9 @@ const updateRating = (rating) => {
 </script>
 
 <template>
-  <li class="card p-4 gap-2 flex flex-col justify-between scale-up-center">
+  <li
+    class="card card w-[400px] rounded-[20px] border border-[rgba(242,200,201,255)] transition-shadow duration-500 ease-in-out text-black bg-white hover:shadow-[rgba(0,0,0,0.35)_0px_5px_15px] p-4 gap-2 flex flex-col justify-between scale-up-center"
+  >
     <div>
       <p class="bold">{{ joke.setup }}</p>
       <p class="punchline mt-3">{{ joke.punchline }} 🤣</p>
@@ -60,3 +62,14 @@ const updateRating = (rating) => {
     </span>
   </li>
 </template>
+
+<style scoped>
+.punchline {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.card:hover .punchline {
+  opacity: 1;
+}
+</style>

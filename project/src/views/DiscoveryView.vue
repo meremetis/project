@@ -170,7 +170,7 @@ const averageRating = computed(() => {
       </div>
       <div v-if="!isLoading" class="pt-4">
         <p v-if="!hasAPIError && hasJokes()" class="text-center text-white info mb-3">
-          *Hover to see the punchline!!
+          *Hover over the card to reveal the punchline!
         </p>
         <ul class="flex justify-center flex-wrap gap-4">
           <JokeCard

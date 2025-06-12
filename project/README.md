@@ -87,6 +87,7 @@ npm run build
 npm run preview
 ```
 ## 📂 Project Structure
+```
 jokes-app/
 │── src/
 │   ├── assets/       # Static assets
@@ -102,7 +103,7 @@ jokes-app/
 │── package.json      # Dependencies & scripts
 │── tailwind.config.js # Tailwind configuration
 │── vite.config.ts    # Vite configuration
-
+```
 
 ## 👤 Author
 

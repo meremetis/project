@@ -2,10 +2,10 @@
 import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
-  message: String, // Accepts the error message
+  message: String,
 })
 
-const emit = defineEmits(['hide']) // Defines an event to close the toast
+const emit = defineEmits(['hide']) 
 </script>
 
 <template>

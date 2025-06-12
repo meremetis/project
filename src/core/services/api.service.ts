@@ -1,23 +1,39 @@
-import axios from 'axios'
+import axios from 'axios';
 
+/**
+ * A singleton service for making API requests.
+ */
 class ApiService {
-  apiClient: any
-  private static instance: ApiService
+  /** Axios instance for making HTTP requests */
+  apiClient: any;
+
+  /** Singleton instance of ApiService */
+  private static instance: ApiService;
+
+  /**
+   * Creates an instance of ApiService.
+   * Ensures only one instance exists (Singleton pattern).
+   */
   constructor() {
     if (!ApiService.instance) {
-      ApiService.instance = this
+      ApiService.instance = this;
       this.apiClient = axios.create({
         baseURL: 'https://official-joke-api.appspot.com/jokes/random/250',
         timeout: 10000,
         headers: {
           'Content-Type': 'application/json',
         },
-      })
+      });
     }
-    return ApiService.instance
+    return ApiService.instance;
   }
 
-   public async get() {
+  /**
+   * Fetches jokes from the API.
+   * @returns {Promise<any>} A promise that resolves to the fetched jokes.
+   * @throws {Error} If the request fails, an error message is thrown.
+   */
+  public async get(): Promise<any> {
     try {
       const response = await this.apiClient.get();
       return response.data;
@@ -26,7 +42,12 @@ class ApiService {
     }
   }
 
-    private handleError(error: any) {
+  /**
+   * Handles API errors and returns a user-friendly message.
+   * @param {any} error - The error object from Axios.
+   * @returns {string} A descriptive error message.
+   */
+  private handleError(error: any): string {
     if (error.response) {
       // Server responded with a status code outside the 2xx range
       switch (error.response.status) {
@@ -53,7 +74,8 @@ class ApiService {
   }
 }
 
-const apiServiceInstance = new ApiService()
-Object.freeze(apiServiceInstance)
+/** Singleton instance of ApiService */
+const apiServiceInstance = new ApiService();
+Object.freeze(apiServiceInstance);
 
-export default apiServiceInstance
+export default apiServiceInstance;

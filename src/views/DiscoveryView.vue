@@ -5,27 +5,29 @@ import jokesService from '../core/services/jokes.service'
 import Loader from './../components/loader.vue'
 import Toast from './../components/Toast.vue'
 import JokeCard from './../components/JokeCard.vue'
+import type { Joke } from '@/core/models/joke'
 
-const jokes = ref([])
-const isLoading = ref(false)
-const hasAPIError = ref(false)
-const apiErrorMessage = ref('Oops, something went wrong!')
-const selectedFilterType = ref('')
-const selectedRating = ref('')
-const favoriteJokesLength = ref(0)
-const searchQuery = ref('')
-const sortedJokes = computed(() => {
+const jokes = ref<Joke[]>([])
+const isLoading = ref<boolean>(false)
+const hasAPIError = ref<boolean>(false)
+const apiErrorMessage = ref<string>('Oops, something went wrong!')
+const selectedFilterType = ref<string>('')
+const selectedRating = ref<string>('')
+const favoriteJokesLength = ref<number>(0)
+const searchQuery = ref<string>('')
+
+const sortedJokes = computed<Joke[]>(() => {
   let filteredJokes = [...jokes.value]
 
   // Apply type filter if needed
   if (selectedFilterType.value) {
-    filteredJokes = filteredJokes.filter((joke) => joke.type === selectedFilterType.value)
+    filteredJokes = filteredJokes.filter((joke: Joke) => joke.type === selectedFilterType.value)
   }
 
   // Apply search filter
   if (searchQuery.value) {
     filteredJokes = filteredJokes.filter(
-      (joke) =>
+      (joke: Joke) =>
         joke.type.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         joke.setup.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         joke.punchline.toLowerCase().includes(searchQuery.value.toLowerCase()),
@@ -34,27 +36,26 @@ const sortedJokes = computed(() => {
 
   // Apply rating filter
   if (selectedRating.value) {
-    filteredJokes = filteredJokes.filter((joke) => joke.rating === Number(selectedRating.value))
+    filteredJokes = filteredJokes.filter((joke: Joke) => joke.rating === Number(selectedRating.value))
   }
 
   return filteredJokes
 })
+
 onMounted(() => {
   favoriteJokesLength.value = jokesService.getFavoriteJokes().length
   isLoading.value = true
   apiService
     .get()
-    .then((response) => {
+    .then((response: Joke[]) => {
       jokes.value = response
       jokes.value = response.map((user) => ({
         ...user,
         rating: 0, // Initialize rating for each user
       }))
       jokesService.saveJokes(jokes.value)
-      console.log('jokes.value', jokes.value)
-      sortedJokes.value = [...jokes.value]
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.error('Error fetching users:', error)
       apiErrorMessage.value = error.message
       hasAPIError.value = true
@@ -72,7 +73,7 @@ const hasJokes = () => {
 }
 
 // Function to filter jokes by type
-const filterByType = (type) => {
+const filterByType = (type: string) => {
   selectedFilterType.value = type
 }
 
@@ -80,7 +81,7 @@ const resetFilter = () => {
   selectedFilterType.value = ''
 }
 
-const addToFavorites = (joke: any) => {
+const addToFavorites = (joke: Joke) => {
   jokesService.addFavorite(joke)
   console.log('favorites', jokesService.getFavoriteJokes())
   favoriteJokesLength.value = jokesService.getFavoriteJokes().length
@@ -97,8 +98,12 @@ const updateRating = (jokeId: number, rating: number) => {
 }
 
 const sortByRating = () => {
-  jokes.value.sort((a, b) => b.rating - a.rating)
-}
+  jokes.value.sort((a, b) => {
+    const ratingA = a.rating !== undefined ? a.rating : 0;
+    const ratingB = b.rating !== undefined ? b.rating : 0;
+    return ratingB - ratingA;
+  });
+};
 
 const sortAlphabetically = () => {
   jokes.value.sort((a, b) => a.setup.localeCompare(b.setup))
@@ -107,10 +112,10 @@ const sortAlphabetically = () => {
 const totalJokesSaved = computed(() => favoriteJokesLength.value)
 
 const averageRating = computed(() => {
-  const ratedJokes = jokes.value.filter((joke) => joke.rating > 0) // Exclude jokes with rating 0
+  const ratedJokes = jokes.value.filter((joke) => (joke.rating ?? 0) > 0) // Exclude jokes with rating 0
   if (ratedJokes.length === 0) return 0
 
-  const totalRating = ratedJokes.reduce((sum, joke) => sum + joke.rating, 0)
+  const totalRating = ratedJokes.reduce((sum, joke) => sum +  (joke.rating ?? 0), 0)
   return (totalRating / ratedJokes.length).toFixed(2) // Round to 2 decimal places
 })
 </script>
